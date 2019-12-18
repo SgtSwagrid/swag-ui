@@ -34,4 +34,4 @@ lwjgl-3.x.x
 * lwjgl-opengl
 * lwjgl-glfw
 
-(Included in /lib)
+(All included in /lib.)
