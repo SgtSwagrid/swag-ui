@@ -3,8 +3,6 @@ package swagui.window;
 import static org.lwjgl.opengl.GL.*;
 import static org.lwjgl.opengl.GL11.*;
 
-import swagui.graphics.Colour;
-
 import static org.lwjgl.glfw.GLFW.*;
 
 import static org.lwjgl.glfw.GLFWErrorCallback.*;
@@ -14,9 +12,6 @@ import static org.lwjgl.glfw.GLFWErrorCallback.*;
  * @author Alec Dorrington
  */
 public class Window {
-    
-    /** Default background colour. */
-    private Colour background = Colour.ELECTROMAGNETIC;
     
     /**
      * Create and run a new window, blocking until exit.
@@ -72,8 +67,8 @@ public class Window {
         });
         
         //Initialize shader.
-        scene.init();
         handler.init(windowId);
+        scene.init(width, height, handler);
         return windowId;
     }
     
@@ -102,8 +97,7 @@ public class Window {
         
         //Clear buffers.
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
-        glClearColor(background.R/255.0F, background.G/255.0F, 
-                background.B/255.0F, 1.0F);
+        glClearColor(0.0F, 0.0F, 0.0F, 1.0F);
         
         //Get window size.
         int[] width = new int[1], height = new int[1];
@@ -127,26 +121,17 @@ public class Window {
     }
     
     /**
-     * Handler of window input events.
-     */
-    public interface Handler {
-        
-        /**
-         * Initialize input listeners.
-         * @param window window to listen to.
-         */
-        public void init(long windowId);
-    }
-    
-    /**
      * Scene to render to screen.
      */
     public interface Scene {
         
         /**
          * Initialize scene shaders.
+         * @param width of the window (pixels).
+         * @param height of the window (pixels).
+         * @param handler of window input events.
          */
-        public void init();
+        public void init(int width, int height, Handler handler);
         
         /**
          * Render the scene to the screen.
@@ -159,5 +144,17 @@ public class Window {
          * Perform cleanup upon window close.
          */
         public void destroy();
+    }
+    
+    /**
+     * Handler of window input events.
+     */
+    public interface Handler {
+        
+        /**
+         * Initialize input listeners.
+         * @param window window to listen to.
+         */
+        public void init(long windowId);
     }
 }

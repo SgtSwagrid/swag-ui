@@ -12,26 +12,62 @@ import swagui.math.Matrix4;
  */
 public class Tile {
     
+    /**
+     * The means by which tile size is determined.
+     */
+    public enum Fill {
+        
+        /** Size is specified in pixels. */
+        ABSOLUTE,
+        
+        /** Size is specified as relative weights. */
+        FILL_PARENT,
+        
+        /** Size is determined automatically by contents. */
+        WRAP_CONTENT;
+    }
+    
+    /**
+     * Tile alignment within a layout.
+     */
+    public enum Alignment {
+        TOP_LEFT, TOP, TOP_RIGHT,
+        LEFT, CENTER, RIGHT,
+        BOTTOM_LEFT, BOTTOM, BOTTOM_RIGHT;
+    }
+    
     /** The scene in which this tile exists. */
     private Scene2D scene;
     
     /** The position of the tile (pixels). */
     private int x, y;
     
+    /** The fill mode for determining tile size. */
+    private Fill hFill = Fill.ABSOLUTE, vFill = Fill.ABSOLUTE;
+    
+    /** Where the tile sits when there is slack. */
+    private Alignment alignment = Alignment.CENTER;
+    
     /** The size of the tile (pixels). */
     private int width = 100, height = 100;
+    
+    /** The relative size of the tile. */
+    private int hWeight = 1, vWeight = 1;
     
     /** The angle of the tile (degrees, anti-clockwise). */
     private int angle = 0;
     
-    /** The depth of the tile (ordering, 0-99). */
-    private int depth = 0;
+    /** The depth of the tile (ordering, 0-99, default=50). */
+    private int depth = 50;
     
     /** The colour of the tile */
     private Colour colour = Colour.SEARBROOK;
     
     /** The texture of the tile. */
     private Texture texture;
+    
+    /** Whether the tile is to be rendered. */
+    private boolean visible = true;
     
     /**
      * Create a new tile.
@@ -87,6 +123,26 @@ public class Tile {
     public int getY() { return y; }
     
     /**
+     * @param x coordinate of the tile (pixels, left-to-right).
+     * @return this tile.
+     */
+    public Tile setX(int x) {
+        this.x = x;
+        update();
+        return this;
+    }
+    
+    /**
+     * @param y coordinate of the tile (pixels, bottom-to-top).
+     * @return this tile.
+     */
+    public Tile setY(int y) {
+        this.y = y;
+        update();
+        return this;
+    }
+    
+    /**
      * Set the position of the tile.
      * @param x coordinate of the tile (pixels, left-to-right).
      * @param y coordinate of the tile (pixels, bottom-to-top).
@@ -95,6 +151,60 @@ public class Tile {
     public Tile setPosition(int x, int y) {
         this.x = x;
         this.y = y;
+        update();
+        return this;
+    }
+    
+    /** @return horizontal tile fill mode (ABSOLUTE/FILL_PARENT/WRAP_CONTENT). */
+    public Fill getHFill() { return hFill; }
+    
+    /** @return vertical tile fill mode (ABSOLUTE/FILL_PARENT/WRAP_CONTENT). */
+    public Fill getVFill() { return vFill; }
+    
+    /**
+     * @param hFill horizontal tile fill mode (ABSOLUTE/FILL_PARENT/WRAP_CONTENT).
+     * @return this tile.
+     */
+    public Tile setHFill(Fill hFill) {
+        this.hFill = hFill;
+        update();
+        return this;
+    }
+    
+    /**
+     * @param vFill vertical tile fill mode (ABSOLUTE/FILL_PARENT/WRAP_CONTENT).
+     * @return this tile.
+     */
+    public Tile setVFill(Fill vFill) {
+        this.vFill = vFill;
+        update();
+        return this;
+    }
+    
+    /**
+     * Set the tile fill mode (ABSOLUTE/FILL_PARENT/WRAP_CONTENT).
+     * @param hFill horizontal tile fill mode.
+     * @param vFill vertical tile fill mode.
+     * @return this tile.
+     */
+    public Tile setFill(Fill hFill, Fill vFill) {
+        this.hFill = hFill;
+        this.vFill = vFill;
+        update();
+        return this;
+    }
+    
+    /** @return alignment of tile when there is slack. */
+    public Alignment getAlignment() { return alignment; }
+    
+    /**
+     * Set the tile alignment when there is slack.
+     * @param alignment of tile.
+     * @return this tile.
+     */
+    public Tile setAlignment(Alignment alignment) {
+        this.alignment = alignment;
+        update();
         return this;
     }
     
@@ -105,6 +215,26 @@ public class Tile {
     public int getHeight() { return height; }
     
     /**
+     * @param width of the tile (pixels).
+     * @return this tile.
+     */
+    public Tile setWidth(int width) {
+        this.width = width;
+        update();
+        return this;
+    }
+    
+    /**
+     * @param height of the tile (pixels).
+     * @return this tile.
+     */
+    public Tile setHeight(int height) {
+        this.height = height;
+        update();
+        return this;
+    }
+    
+    /**
      * Set the size of the tile.
      * @param width of the tile (pixels).
      * @param height of the tile (pixels).
@@ -113,6 +243,46 @@ public class Tile {
     public Tile setSize(int width, int height) {
         this.width = width;
         this.height = height;
+        update();
+        return this;
+    }
+    
+    /** @return relative horizontal weight. */
+    public int getHWeight() { return hWeight; }
+    
+    /** @return relative vertical weight. */
+    public int getVWeight() { return vWeight; }
+    
+    /**
+     * @param hWeight relative horizontal weight.
+     * @return this tile.
+     */
+    public Tile setHWeight(int hWeight) {
+        this.hWeight = hWeight;
+        update();
+        return this;
+    }
+    
+    /**
+     * @param vWeight relative vertical weight.
+     * @return this tile.
+     */
+    public Tile setVWeight(int vWeight) {
+        this.vWeight = vWeight;
+        update();
+        return this;
+    }
+    
+    /**
+     * Set tile weights for relative size.
+     * @param hWeight relative horizontal weight.
+     * @param vWeight relative vertical weight.
+     * @return this tile.
+     */
+    public Tile setWeights(int hWeight, int vWeight) {
+        this.hWeight = hWeight;
+        this.vWeight = vWeight;
+        update();
         return this;
     }
     
@@ -120,7 +290,8 @@ public class Tile {
     public int getAngle() { return angle; }
     
     /**
-     * Set the orientation of the tile.
+     * Set the orientation of the tile.<br>
+     * Note: this currently doesn't work with buttons or layouts.
      * @param angle of the tile (degrees, anti-clockwise).
      * @return this tile.
      */
@@ -129,12 +300,12 @@ public class Tile {
         return this;
     }
     
-    /** @return depth of the tile (ordering, 0-99). */
+    /** @return depth of the tile (ordering, 0-99, default=50). */
     public int getDepth() { return depth; }
     
     /**
      * Set the depth of the tile (ordering).
-     * @param depth of the tile (0-99).
+     * @param depth of the tile (0-99, default=50).
      * @return this tile.
      */
     public Tile setDepth(int depth) {
@@ -170,6 +341,19 @@ public class Tile {
         return this;
     }
     
+    /** @return whether the tile is visible to the renderer. */
+    public boolean isVisible() { return visible; }
+    
+    /**
+     * Set whether the tile is visible to the renderer.
+     * @param visible whether the tile is to be rendered.
+     * @return this tile.
+     */
+    public Tile setVisible(boolean visible) {
+        this.visible = visible;
+        return this;
+    }
+    
     /** @return x-coordinate of left edge of tile. */
     public int getMinX() {
         return x - width/2;
@@ -189,4 +373,7 @@ public class Tile {
     public int getMaxY() {
         return y + height/2;
     }
+    
+    /** Update the position/size of this tile and its children. */
+    public void update() {}
 }

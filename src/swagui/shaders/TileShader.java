@@ -65,6 +65,8 @@ public class TileShader extends Shader {
      */
     private void renderTile(Tile tile) {
         
+        if(!tile.isVisible()) return;
+        
         //Load texture.
         if(tile.getTexture().isPresent()) {
             loadTexture(tile.getTexture().get());

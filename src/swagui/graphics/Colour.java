@@ -138,4 +138,9 @@ public class Colour {
                 (100-amount)*B/100 + amount*colour.B/100,
                 (100-amount)*A/100 + amount*colour.A/100);
     }
+    
+    @Override
+    public String toString() {
+        return "("+R+", "+G+", "+B+", "+A+")";
+    }
 }

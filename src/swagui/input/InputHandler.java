@@ -52,9 +52,9 @@ public class InputHandler implements Handler {
         
         //Trigger mouse click event.
         if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-            new MouseLeftClickEvent(x, y);
+            handler.trigger(new MouseLeftClickEvent(x, y));
         } else {
-            new MouseButtonEvent(x, y, button, action);
+            handler.trigger(new MouseButtonEvent(x, y, button, action));
         }
     }
     
@@ -75,7 +75,7 @@ public class InputHandler implements Handler {
         int y = (int)my - height[0]/2;
         
         //Trigger cursor move event.
-        new MouseMoveEvent(x, y);
+        handler.trigger(new MouseMoveEvent(x, y));
     }
     
     /**
@@ -85,7 +85,7 @@ public class InputHandler implements Handler {
      * @param height of the window (pixels).
      */
     private void onWindowSize(long windowId, int width, int height) {
-        new WindowResizeEvent(width, height);
+        handler.trigger(new WindowResizeEvent(width, height));
     }
     
     /**
@@ -99,7 +99,6 @@ public class InputHandler implements Handler {
         private MouseEvent(int mx, int my) {
             MX = mx;
             MY = my;
-            handler.trigger(this);
         }
     }
     
@@ -152,7 +151,6 @@ public class InputHandler implements Handler {
        private WindowResizeEvent(int width, int height) {
            WIDTH = width;
            HEIGHT = height;
-           handler.trigger(this);
        }
    }
 }
