@@ -1,6 +1,5 @@
 package swagui.layouts;
 
-import swagui.tiles.Scene2D;
 import swagui.tiles.Tile;
 
 /**
@@ -8,23 +7,40 @@ import swagui.tiles.Tile;
  * Places tiles vertically, top-to-bottom.
  * @author Alec Dorrington
  */
-public class VerticalList extends ListLayout {
+public class VerticalList extends Layout {
+    
+    /** Size of spaces between elements in the list. */
+    private int spacing = 0;
     
     /**
      * Create a new vertical list layout.
-     * @param scene in which the list exists.
      * @param children the contents of the list.
      */
-    public VerticalList(Scene2D scene, Tile... children) {
-        super(scene, children);
+    public VerticalList(Tile... children) {
+        super(children);
+    }
+    
+    /**
+     * @return the size of spaces between elements in the list (pixels).
+     */
+    public int getSpacing() { return spacing; }
+    
+    /**
+     * @param spacing between elements in the list (pixels).
+     * @return this list.
+     */
+    public Layout setSpacing(int spacing) {
+        this.spacing = spacing;
+        update();
+        return this;
     }
     
     @Override
     public void update() {
+        
         updateHeight();
         updateWidth();
-        updateY();
-        updateX();
+        updatePosition();
     }
     
     /**
@@ -100,9 +116,9 @@ public class VerticalList extends ListLayout {
     }
     
     /**
-     * Update y-coordinate of this list's children.
+     * Update positions of this list's children.
      */
-    private void updateY() {
+    private void updatePosition() {
         
         //Starting y-coordinate at top edge of list.
         int y = getY() + getHeight()/2 - getPadding();
@@ -129,53 +145,15 @@ public class VerticalList extends ListLayout {
             excessPadding = excessHeight / getChildren().size();
         }
         
-        for(Tile t : getChildren()) {
+        for(Tile tile : getChildren()) {
             
-            switch(t.getAlignment()) {
+            //Align each tile within the cell.
+            alignTileVert(tile, y-excessPadding, y);
+            alignTileHorz(tile, getMinX()+getPadding(),
+                    getMaxX()-getPadding());
             
-            //Tile aligns with top edge of cell.
-            case TOP_LEFT: case TOP: case TOP_RIGHT:
-                t.setY(y - t.getHeight()/2);
-                break;
-            
-            //Tile aligns with center of cell.
-            case LEFT: case CENTER: case RIGHT:
-                t.setY(y - t.getHeight()/2 - excessPadding/2);
-                break;
-            
-            //Tile aligns with bottom edge of cell.
-            case BOTTOM_LEFT: case BOTTOM: case BOTTOM_RIGHT:
-                t.setY(y - t.getHeight()/2 - excessPadding);
-                break;
-            }
             //Increment y value for next tile.
-            y -= t.getHeight() + excessPadding + getSpacing();
+            y -= tile.getHeight() + excessPadding + getSpacing();
         }
-    }
-    
-    /**
-     * Update x-coordinate of this list's children.
-     */
-    private void updateX() {
-        
-        getChildren().forEach(t -> {
-            switch(t.getAlignment()) {
-            
-            //Tile aligns with left edge of list.
-            case BOTTOM_LEFT: case LEFT: case TOP_LEFT:
-                t.setX(getX() - getWidth()/2 + getPadding() + t.getWidth()/2);
-                break;
-            
-            //Tile aligns with center of list.
-            case BOTTOM: case CENTER: case TOP:
-                t.setX(getX());
-                break;
-            
-            //Tile aligns with right edge of list.
-            case BOTTOM_RIGHT: case RIGHT: case TOP_RIGHT:
-                t.setX(getX() + getWidth()/2 - getPadding() - t.getWidth()/2);
-                break;
-            }
-        });
     }
 }

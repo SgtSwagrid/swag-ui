@@ -71,12 +71,8 @@ public class Tile {
     
     /**
      * Create a new tile.
-     * @param scene in which the tile exists.
      */
-    public Tile(Scene2D scene) {
-        this.scene = scene;
-        scene.addTile(this);
-    }
+    public Tile() {}
     
     /**
      * Create a new tile.
@@ -86,11 +82,9 @@ public class Tile {
      * @param width of the tile (pixels, left-to-right).
      * @param height of the tile (pixels, bottom-to-top).
      */
-    public Tile(Scene2D scene, int x, int y, int width, int height) {
+    public Tile(int x, int y, int width, int height) {
         setPosition(x, y);
         setSize(width, height);
-        this.scene = scene;
-        scene.addTile(this);
     }
     
     /**
@@ -109,11 +103,18 @@ public class Tile {
         return translation.mul(rotation.mul(scale));
     }
     
+    /** @return the scene to which this tile belongs. */
+    public Scene2D getScene() { return scene; }
+    
     /**
-     * Remove this tile from the scene.
+     * Change the scene to which this tile belongs.
+     * @param scene of this tile.
+     * @return this tile.
      */
-    public void delete() {
-        scene.removeTile(this);
+    public Tile setScene(Scene2D scene) {
+        this.scene = scene;
+        if(getScene() != null) getScene().update();
+        return this;
     }
     
     /** @return x-coordinate of the tile (pixels, left-to-right). */
@@ -204,7 +205,7 @@ public class Tile {
      */
     public Tile setAlignment(Alignment alignment) {
         this.alignment = alignment;
-        update();
+        if(getScene() != null) getScene().update();
         return this;
     }
     
@@ -220,7 +221,7 @@ public class Tile {
      */
     public Tile setWidth(int width) {
         this.width = width;
-        update();
+        if(getScene() != null) getScene().update();
         return this;
     }
     
@@ -230,7 +231,7 @@ public class Tile {
      */
     public Tile setHeight(int height) {
         this.height = height;
-        update();
+        if(getScene() != null) getScene().update();
         return this;
     }
     
@@ -243,7 +244,7 @@ public class Tile {
     public Tile setSize(int width, int height) {
         this.width = width;
         this.height = height;
-        update();
+        if(getScene() != null) getScene().update();
         return this;
     }
     
@@ -259,7 +260,7 @@ public class Tile {
      */
     public Tile setHWeight(int hWeight) {
         this.hWeight = hWeight;
-        update();
+        if(getScene() != null) getScene().update();
         return this;
     }
     
@@ -269,7 +270,7 @@ public class Tile {
      */
     public Tile setVWeight(int vWeight) {
         this.vWeight = vWeight;
-        update();
+        if(getScene() != null) getScene().update();
         return this;
     }
     
@@ -282,7 +283,7 @@ public class Tile {
     public Tile setWeights(int hWeight, int vWeight) {
         this.hWeight = hWeight;
         this.vWeight = vWeight;
-        update();
+        if(getScene() != null) getScene().update();
         return this;
     }
     

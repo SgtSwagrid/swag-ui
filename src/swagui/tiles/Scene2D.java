@@ -6,7 +6,8 @@ import java.util.TreeSet;
 import swagui.graphics.Colour;
 import swagui.input.InputHandler;
 import swagui.input.InputHandler.WindowResizeEvent;
-import swagui.layouts.FrameLayout;
+import swagui.layouts.Frame;
+import swagui.layouts.Layout;
 import swagui.shaders.TileShader;
 import swagui.window.Window.Handler;
 import swagui.window.Window.Scene;
@@ -25,10 +26,16 @@ public class Scene2D implements Scene {
             (t1, t2) -> 2*(t1.getDepth()-t2.getDepth())+1);
     
     /** Background of scene. */
-    private FrameLayout background = (FrameLayout) new FrameLayout(this)
+    private Frame background = (Frame) new Frame()
             .setDepth(0)
             .setVisible(true)
             .setColour(Colour.ELECTROMAGNETIC);
+    
+    /** Root layout of scene. */
+    private Layout root = new Layout(background);
+    
+    /** Lock to prevent infinite update loops. */
+    private boolean lock = false;
 
     @Override
     public void init(int width, int height, Handler handler) {
@@ -41,6 +48,7 @@ public class Scene2D implements Scene {
         shader.init();
         
         //Initialize background.
+        root.setScene(this);
         background.setSize(width, height);
         tiles.add(background);
         
@@ -61,21 +69,32 @@ public class Scene2D implements Scene {
     }
     
     /**
-     * Add a new tile to the scene.
-     * @param tile to add.
+     * Get the scene root, from which all tiles descend.
+     * @return the root tile of the screen.
      */
-    public void addTile(Tile tile) {
-        tiles.add(tile);
-    }
+    public Layout getRoot() { return root; }
     
     /**
-     * Remove a tile from the scene.
-     * @param tile to remove.
+     * Get the scene background, a FrameLayout sized to match the window.
+     * @return the background tile of the screen.
      */
-    public void removeTile(Tile tile) {
-        tiles.remove(tile);
-    }
+    public Frame getBackground() { return background; }
     
-    /** @return the background tile of the scene. */
-    public FrameLayout getBackground() { return background; }
+    /**
+     * Update this scene and all of its children.
+     */
+    public void update() {
+        
+        //Acquire update lock to prevent infinite loops.
+        if(lock) return;
+        lock = true;
+        
+        //Update all tiles.
+        tiles.clear();
+        root.update();
+        tiles.addAll(root.getAncestors());
+        
+        //Release update lock.
+        lock = false;
+    }
 }

@@ -13,6 +13,9 @@ public class InputHandler implements Handler {
     /** Input event handler. */
     EventHandler handler = new EventHandler();
     
+    /** Current cursor position. */
+    private int mx, my;
+    
     /** @return input event handler. */
     public EventHandler getHandler() { return handler; }
 
@@ -31,6 +34,16 @@ public class InputHandler implements Handler {
         //Window resize listener.
         glfwSetWindowSizeCallback(windowId, this::onWindowSize);
     }
+    
+    /**
+     * @return current x-coordinate of cursor (pixels, left-to-right).
+     */
+    public int getMouseX() { return mx; }
+    
+    /**
+     * @return current y-coordinate of cursor (pixels, bottom-to-top).
+     */
+    public int getMouseY() { return my; }
     
     /**
      * Mouse click listener.
@@ -74,11 +87,11 @@ public class InputHandler implements Handler {
         glfwGetWindowSize(windowId, width, height);
         
         //Calculate cursor position (center-coordinates).
-        int x = (int)mx - width[0]/2;
-        int y = (int)my - height[0]/2;
+        this.mx = (int)mx - width[0]/2;
+        this.my = (int)my - height[0]/2;
         
         //Trigger cursor move event.
-        handler.trigger(new MouseMoveEvent(x, y));
+        handler.trigger(new MouseMoveEvent(this.mx, this.my));
     }
     
     /**

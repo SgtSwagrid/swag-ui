@@ -19,11 +19,10 @@ public class Button extends Tile {
     
     /**
      * Create a new button.
-     * @param scene in which the tile exists.
      * @param input event handler.
      */
-    public Button(Scene2D scene, InputHandler input) {
-        super(scene);
+    public Button(InputHandler input) {
+        super();
         this.input = input;
         init();
     }
@@ -39,7 +38,7 @@ public class Button extends Tile {
      */
     public Button(Scene2D scene, InputHandler input,
             int x, int y, int width, int height) {
-        super(scene, x, y, width, height);
+        super(x, y, width, height);
         this.input = input;
         init();
     }
@@ -49,6 +48,11 @@ public class Button extends Tile {
     
     /**  @return whether the cursor is currently over this button. */
     public boolean isMouseOver() { return mouseOver; }
+    
+    @Override
+    public void update() {
+        updateCursor(input.getMouseX(), input.getMouseY());
+    }
     
     /**
      * Button listener initialization.
@@ -95,10 +99,4 @@ public class Button extends Tile {
      * Called when the cursor leaves the button.
      */
     protected void onMouseLeave() {}
-    
-    @Override
-    public void delete() {
-        super.delete();
-        input.getHandler().remove(this);
-    }
 }
