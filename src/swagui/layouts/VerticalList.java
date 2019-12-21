@@ -148,7 +148,7 @@ public class VerticalList extends Layout {
         for(Tile tile : getChildren()) {
             
             //Align each tile within the cell.
-            alignTileVert(tile, y-excessPadding, y);
+            alignTileVert(tile, y-tile.getHeight()-excessPadding, y);
             alignTileHorz(tile, getMinX()+getPadding(),
                     getMaxX()-getPadding());
             

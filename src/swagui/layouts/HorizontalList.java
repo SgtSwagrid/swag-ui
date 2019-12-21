@@ -148,7 +148,7 @@ public class HorizontalList extends Layout {
         for(Tile tile : getChildren()) {
             
             //Align each tile within the cell.
-            alignTileHorz(tile, x, x+excessPadding);
+            alignTileHorz(tile, x, x+tile.getWidth()+excessPadding);
             alignTileVert(tile, getMinY()+getPadding(),
                     getMaxY()-getPadding());
             
