@@ -25,6 +25,9 @@ public class InputHandler implements Handler {
         //Mouse cursor movement listener.
         glfwSetCursorPosCallback(windowId, this::onCursorPos);
         
+        //Key press/release callback.
+        glfwSetKeyCallback(windowId, this::onKey);
+        
         //Window resize listener.
         glfwSetWindowSizeCallback(windowId, this::onWindowSize);
     }
@@ -79,12 +82,27 @@ public class InputHandler implements Handler {
     }
     
     /**
+     * Key press/release listener.
+     * @param windowId ID of the window.
+     * @param key which was pressed/released.
+     * @param scancode
+     * @param action press/release.
+     * @param mods
+     */
+    private void onKey(long windowId, int key,
+            int scancode, int action, int mods) {
+        
+        handler.trigger(new KeyboardEvent(key, action));
+    }
+    
+    /**
      * Window resize listener.
      * @param windowId ID of the window.
      * @param width of the window (pixels).
      * @param height of the window (pixels).
      */
     private void onWindowSize(long windowId, int width, int height) {
+        
         handler.trigger(new WindowResizeEvent(width, height));
     }
     
@@ -141,16 +159,33 @@ public class InputHandler implements Handler {
     }
     
     /**
+     * Event for key press/release.
+     */
+    public class KeyboardEvent {
+        
+        /** The key which was used. */
+        public final int KEY;
+        
+        /** Whether the key was pressed/released. */
+        public final int ACTION;
+        
+        private KeyboardEvent(int key, int action) {
+            KEY = key;
+            ACTION = action;
+        }
+    }
+    
+    /**
     * Event for when window is resized by user.
     */
-   public class WindowResizeEvent {
-       
-       /** Size of the window (pixels). */
-       public final int WIDTH, HEIGHT;
-       
-       private WindowResizeEvent(int width, int height) {
-           WIDTH = width;
-           HEIGHT = height;
-       }
-   }
+    public class WindowResizeEvent {
+    
+        /** Size of the window (pixels). */
+        public final int WIDTH, HEIGHT;
+        
+        private WindowResizeEvent(int width, int height) {
+            WIDTH = width;
+            HEIGHT = height;
+        }
+    }
 }
