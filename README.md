@@ -7,19 +7,19 @@ Example 1
 Scene2D scene = new Scene2D();
 InputHandler input = new InputHandler();
 
-new Tile(scene, 0, 0, 100, 100)
-    .setDepth(1);
+scene.addTile(new Tile(0, 0, 100, 100)
+    .setDepth(1));
 
-new Tile(scene, 50, 50, 100, 100)
+scene.addTile(new Tile(50, 50, 100, 100)
     .setColour(Colour.LYNX_WHITE)
-    .setAngle(10);
+    .setAngle(10));
 
-new Button(scene, input, -250, 250, 200, 50) {
+scene.addTile(new Button(input, -250, 250, 200, 50) {
     @Override
     protected void onLeftClick() {
         System.out.println("Hello, World!");
     }
-};
+});
 
 new Window(1280, 960, "Example 1", scene, input);
 ```
@@ -28,14 +28,14 @@ Example 2
 Scene2D scene = new Scene2D();
 InputHandler input = new InputHandler();
 
-scene.getBackground().addTile(new HorizontalList(scene,
-    new Tile(scene)
+scene.getBackground().addTile(new HorizontalList(
+    new Tile()
         .setColour(Colour.LYNX_WHITE)
         .setFill(Fill.FILL_PARENT, Fill.FILL_PARENT),
-    new Tile(scene)
+    new Tile()
         .setColour(Colour.NAVAL)
         .setFill(Fill.FILL_PARENT, Fill.FILL_PARENT),
-    new Tile(scene)
+    new Tile()
         .setColour(Colour.ELECTROMAGNETIC)
         .setFill(Fill.FILL_PARENT, Fill.FILL_PARENT)));
 
