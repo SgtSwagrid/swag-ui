@@ -10,14 +10,14 @@ Example 1
 Scene2D scene = new Scene2D();
 InputHandler input = new InputHandler();
 
-scene.addTile(new Tile(0, 0, 100, 100)
+scene.getRoot().addTile(new Tile(0, 0, 100, 100)
     .setDepth(1));
 
-scene.addTile(new Tile(50, 50, 100, 100)
+scene.getRoot().addTile(new Tile(50, 50, 100, 100)
     .setColour(Colour.LYNX_WHITE)
     .setAngle(10));
 
-scene.addTile(new Button(input, -250, 250, 200, 50) {
+scene.getRoot().addTile(new Button(input, -250, 250, 200, 50) {
     @Override
     protected void onLeftClick() {
         System.out.println("Hello, World!");
