@@ -1,5 +1,5 @@
 # SwagUI
-A graphics library for 2D Java games using OpenGL/GLFW.
+A graphics library for 2D Java games using OpenGL/GLFW/LWJGL.
 
 #### Installation
 Simply include 'SwagUI vX.X.jar' in your project.
