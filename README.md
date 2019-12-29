@@ -9,6 +9,7 @@ Example 1
 ```java
 Scene2D scene = new Scene2D();
 InputHandler input = new InputHandler();
+Window window = new Window(1280, 960, "Example 1", scene, input);
 
 scene.getRoot().addTile(new Tile(0, 0, 100, 100)
     .setDepth(1));
@@ -24,12 +25,13 @@ scene.getRoot().addTile(new Button(input, -250, 250, 200, 50) {
     }
 });
 
-new Window(1280, 960, "Example 1", scene, input);
+window.open();
 ```
 Example 2
 ```java
 Scene2D scene = new Scene2D();
 InputHandler input = new InputHandler();
+new Window(1280, 960, "Example 2", scene, input);
 
 scene.getBackground().addTile(new HorizontalList(
     new Tile()
@@ -42,7 +44,7 @@ scene.getBackground().addTile(new HorizontalList(
         .setColour(Colour.ELECTROMAGNETIC)
         .setFill(Fill.FILL_PARENT, Fill.FILL_PARENT)));
 
-new Window(1280, 960, "Example 2", scene, input);
+window.open();
 ```
 #### Notes
 This is by no means a complete UI suite, but rather an ongoing project where I will add new features as I need them.
