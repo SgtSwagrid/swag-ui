@@ -54,23 +54,11 @@ public class InputHandler implements Handler {
      */
     private void onMouseButton(long windowId, int button, int action, int mods) {
         
-        //Get size of window.
-        int[] width = new int[1], height = new int[1];
-        glfwGetWindowSize(windowId, width, height);
-        
-        //Get cursor position (corner-coordinates).
-        double[] mx = new double[1], my = new double[1];
-        glfwGetCursorPos(windowId, mx, my);
-        
-        //Calculate cursor position (center-coordinates).
-        int x = (int)mx[0] - width[0]/2;
-        int y = (int)my[0] - height[0]/2;
-        
         //Trigger mouse click event.
         if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-            handler.trigger(new MouseLeftClickEvent(x, y));
+            handler.trigger(new MouseLeftClickEvent(mx, my));
         } else {
-            handler.trigger(new MouseButtonEvent(x, y, button, action));
+            handler.trigger(new MouseButtonEvent(mx, my, button, action));
         }
     }
     
@@ -88,7 +76,7 @@ public class InputHandler implements Handler {
         
         //Calculate cursor position (center-coordinates).
         this.mx = (int)mx - width[0]/2;
-        this.my = (int)my - height[0]/2;
+        this.my = height[0]/2 - (int)my;
         
         //Trigger cursor move event.
         handler.trigger(new MouseMoveEvent(this.mx, this.my));

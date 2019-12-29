@@ -2,7 +2,6 @@ package swagui.input;
 
 import swagui.input.InputHandler.MouseLeftClickEvent;
 import swagui.input.InputHandler.MouseMoveEvent;
-import swagui.tiles.Scene2D;
 import swagui.tiles.Tile;
 
 /**
@@ -29,15 +28,13 @@ public class Button extends Tile {
     
     /**
      * Create a new button.
-     * @param scene in which the tile exists.
      * @param input event handler.
      * @param x x-coordinate of the button (pixels).
      * @param y y-coordinate of the button (pixels).
      * @param width of the button (pixels, left-to-right).
      * @param height of the button (pixels, bottom-to-top).
      */
-    public Button(Scene2D scene, InputHandler input,
-            int x, int y, int width, int height) {
+    public Button(InputHandler input, int x, int y, int width, int height) {
         super(x, y, width, height);
         this.input = input;
         init();
