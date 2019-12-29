@@ -3,7 +3,7 @@ package swagui.layouts;
 import swagui.tiles.Tile;
 
 /**
- * A frame into which other tiles may be placed.
+ * A frame layout into which other tiles may be placed.
  * @author Alec Dorrington
  */
 public class Frame extends Layout {
@@ -21,9 +21,15 @@ public class Frame extends Layout {
     @Override
     public void update() {
         
+        //Update sizes of this frame and its children.
         updateWidth();
         updateHeight();
+        updateAspectRatio();
+        
+        //Update positions of this frame and its children.
         updatePosition();
+        
+        getChildren().forEach(Tile::update);
     }
     
     /**
@@ -32,7 +38,7 @@ public class Frame extends Layout {
     private void updateWidth() {
         
         //If set to match size of contents horizontally.
-        if(getHFill() == Fill.WRAP_CONTENT) {
+        if(getFill().H_WRAP_CONTENT) {
             
             //Set width of frame to match widest child.
             int width = getChildren().stream()
@@ -45,7 +51,7 @@ public class Frame extends Layout {
             
             //Set relative-width tiles to match width of frame.
             getChildren().stream()
-                .filter(t -> t.getHFill() == Fill.FILL_PARENT)
+                .filter(t -> t.getFill().H_FILL_PARENT)
                 .forEach(t -> t.setWidth(getWidth() - 2*getPadding()));
         }
     }
@@ -56,7 +62,7 @@ public class Frame extends Layout {
     private void updateHeight() {
         
         //If set to match size of contents vertically.
-        if(getVFill() == Fill.WRAP_CONTENT) {
+        if(getFill().V_WRAP_CONTENT) {
             
             //Set height of frame to match tallest child.
             int height = getChildren().stream()
@@ -68,7 +74,7 @@ public class Frame extends Layout {
             
             //Set relative-height tiles to match height of frame.
             getChildren().stream()
-                .filter(t -> t.getVFill() == Fill.FILL_PARENT)
+                .filter(t -> t.getFill().V_FILL_PARENT)
                 .forEach(t -> t.setHeight(getHeight() - 2*getPadding()));
         }
     }

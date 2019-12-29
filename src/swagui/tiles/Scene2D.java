@@ -33,9 +33,6 @@ public class Scene2D implements Scene {
     
     /** Root layout of scene. */
     private Layout root = new Layout(background);
-    
-    /** Lock to prevent infinite update loops. */
-    private boolean lock = false;
 
     @Override
     public void init(int width, int height, Handler handler) {
@@ -48,19 +45,25 @@ public class Scene2D implements Scene {
         shader.init();
         
         //Initialize background.
-        root.setScene(this);
         background.setSize(width, height);
-        tiles.add(background);
+        update();
         
         //Resize background upon window resize.
         InputHandler input = (InputHandler) handler;
-        input.getHandler().register(WindowResizeEvent.class,
-            e -> background.setSize(e.WIDTH, e.HEIGHT).update());
+        input.getHandler().register(WindowResizeEvent.class, e -> {
+            background.setSize(e.WIDTH, e.HEIGHT);
+            update();
+        });
     }
 
     @Override
     public void render(int width, int height) {
         shader.render(tiles, width, height);
+    }
+    
+    @Override
+    public Colour getColour() {
+        return background.getColour();
     }
 
     @Override
@@ -82,19 +85,14 @@ public class Scene2D implements Scene {
     
     /**
      * Update this scene and all of its children.
+     * @return this scene.
      */
-    public void update() {
-        
-        //Acquire update lock to prevent infinite loops.
-        if(lock) return;
-        lock = true;
+    public Scene2D update() {
         
         //Update all tiles.
         tiles.clear();
         root.update();
         tiles.addAll(root.getAncestors());
-        
-        //Release update lock.
-        lock = false;
+        return this;
     }
 }

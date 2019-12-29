@@ -4,6 +4,8 @@ import java.util.Optional;
 
 import swagui.graphics.Colour;
 import swagui.graphics.Texture;
+import swagui.layouts.Layout.Align;
+import swagui.layouts.Layout.Fill;
 import swagui.math.Matrix4;
 
 /**
@@ -12,47 +14,23 @@ import swagui.math.Matrix4;
  */
 public class Tile {
     
-    /**
-     * The means by which tile size is determined.
-     */
-    public enum Fill {
-        
-        /** Size is specified in pixels. */
-        ABSOLUTE,
-        
-        /** Size is specified as relative weights. */
-        FILL_PARENT,
-        
-        /** Size is determined automatically by contents. */
-        WRAP_CONTENT;
-    }
-    
-    /**
-     * Tile alignment within a layout.
-     */
-    public enum Alignment {
-        TOP_LEFT, TOP, TOP_RIGHT,
-        LEFT, CENTER, RIGHT,
-        BOTTOM_LEFT, BOTTOM, BOTTOM_RIGHT;
-    }
-    
-    /** The scene in which this tile exists. */
-    private Scene2D scene;
+    /** The tile alignment for determining position within a view. */
+    private Align alignment = Align.CENTER;
     
     /** The position of the tile (pixels). */
     private int x, y;
     
     /** The fill mode for determining tile size. */
-    private Fill hFill = Fill.ABSOLUTE, vFill = Fill.ABSOLUTE;
-    
-    /** Where the tile sits when there is slack. */
-    private Alignment alignment = Alignment.CENTER;
+    private Fill fill = Fill.ABSOLUTE;
     
     /** The size of the tile (pixels). */
     private int width = 100, height = 100;
     
     /** The relative size of the tile. */
     private int hWeight = 1, vWeight = 1;
+    
+    /** The aspect ratio of the tile (width:height). */
+    private float aspectRatio = 1.0F;
     
     /** The angle of the tile (degrees, anti-clockwise). */
     private int angle = 0;
@@ -103,17 +81,16 @@ public class Tile {
         return translation.mul(rotation.mul(scale));
     }
     
-    /** @return the scene to which this tile belongs. */
-    public Scene2D getScene() { return scene; }
+    /** @return the tile alignment for positioning within a view. */
+    public Align getAlignment() { return alignment; }
     
     /**
-     * Change the scene to which this tile belongs.
-     * @param scene of this tile.
+     * Set the tile alignment for positioning within a view.
+     * @param alignment of tile.
      * @return this tile.
      */
-    public Tile setScene(Scene2D scene) {
-        this.scene = scene;
-        if(getScene() != null) getScene().update();
+    public Tile setAlignment(Align alignment) {
+        this.alignment = alignment;
         return this;
     }
     
@@ -129,7 +106,6 @@ public class Tile {
      */
     public Tile setX(int x) {
         this.x = x;
-        update();
         return this;
     }
     
@@ -139,7 +115,6 @@ public class Tile {
      */
     public Tile setY(int y) {
         this.y = y;
-        update();
         return this;
     }
     
@@ -152,60 +127,19 @@ public class Tile {
     public Tile setPosition(int x, int y) {
         this.x = x;
         this.y = y;
-        update();
         return this;
     }
     
-    /** @return horizontal tile fill mode (ABSOLUTE/FILL_PARENT/WRAP_CONTENT). */
-    public Fill getHFill() { return hFill; }
-    
-    /** @return vertical tile fill mode (ABSOLUTE/FILL_PARENT/WRAP_CONTENT). */
-    public Fill getVFill() { return vFill; }
+    /** @return tile fill mode for determining size. */
+    public Fill getFill() { return fill; }
     
     /**
-     * @param hFill horizontal tile fill mode (ABSOLUTE/FILL_PARENT/WRAP_CONTENT).
+     * Set the tile fill mode for determining size.
+     * @param fill tile fill mode.
      * @return this tile.
      */
-    public Tile setHFill(Fill hFill) {
-        this.hFill = hFill;
-        update();
-        return this;
-    }
-    
-    /**
-     * @param vFill vertical tile fill mode (ABSOLUTE/FILL_PARENT/WRAP_CONTENT).
-     * @return this tile.
-     */
-    public Tile setVFill(Fill vFill) {
-        this.vFill = vFill;
-        update();
-        return this;
-    }
-    
-    /**
-     * Set the tile fill mode (ABSOLUTE/FILL_PARENT/WRAP_CONTENT).
-     * @param hFill horizontal tile fill mode.
-     * @param vFill vertical tile fill mode.
-     * @return this tile.
-     */
-    public Tile setFill(Fill hFill, Fill vFill) {
-        this.hFill = hFill;
-        this.vFill = vFill;
-        update();
-        return this;
-    }
-    
-    /** @return alignment of tile when there is slack. */
-    public Alignment getAlignment() { return alignment; }
-    
-    /**
-     * Set the tile alignment when there is slack.
-     * @param alignment of tile.
-     * @return this tile.
-     */
-    public Tile setAlignment(Alignment alignment) {
-        this.alignment = alignment;
-        if(getScene() != null) getScene().update();
+    public Tile setFill(Fill fill) {
+        this.fill = fill;
         return this;
     }
     
@@ -221,7 +155,6 @@ public class Tile {
      */
     public Tile setWidth(int width) {
         this.width = width;
-        if(getScene() != null) getScene().update();
         return this;
     }
     
@@ -231,7 +164,6 @@ public class Tile {
      */
     public Tile setHeight(int height) {
         this.height = height;
-        if(getScene() != null) getScene().update();
         return this;
     }
     
@@ -244,7 +176,6 @@ public class Tile {
     public Tile setSize(int width, int height) {
         this.width = width;
         this.height = height;
-        if(getScene() != null) getScene().update();
         return this;
     }
     
@@ -260,7 +191,6 @@ public class Tile {
      */
     public Tile setHWeight(int hWeight) {
         this.hWeight = hWeight;
-        if(getScene() != null) getScene().update();
         return this;
     }
     
@@ -270,7 +200,6 @@ public class Tile {
      */
     public Tile setVWeight(int vWeight) {
         this.vWeight = vWeight;
-        if(getScene() != null) getScene().update();
         return this;
     }
     
@@ -283,7 +212,19 @@ public class Tile {
     public Tile setWeights(int hWeight, int vWeight) {
         this.hWeight = hWeight;
         this.vWeight = vWeight;
-        if(getScene() != null) getScene().update();
+        return this;
+    }
+    
+    /** @return the aspect ratio of the tile (width:height). */
+    public float getAspectRatio() { return aspectRatio; }
+    
+    /**
+     * Set the aspect ratio of the tile.
+     * @param apsectRatio of the tile (width:height).
+     * @return this tile.
+     */
+    public Tile setAspectRatio(float aspectRatio) {
+        this.aspectRatio = aspectRatio;
         return this;
     }
     

@@ -38,9 +38,15 @@ public class VerticalList extends Layout {
     @Override
     public void update() {
         
-        updateHeight();
+        //Update sizes of this frame and its children.
         updateWidth();
+        updateHeight();
+        updateAspectRatio();
+        
+        //Update positions of this frame and its children.
         updatePosition();
+        
+        getChildren().forEach(Tile::update);
     }
     
     /**
@@ -53,7 +59,7 @@ public class VerticalList extends Layout {
                 + 2*getPadding();
         
         //If set to match size of contents vertically.
-        if(getVFill() == Fill.WRAP_CONTENT) {
+        if(getFill().V_WRAP_CONTENT) {
             
             //Update children to obtain their heights.
             getChildren().forEach(Tile::update);
@@ -68,13 +74,13 @@ public class VerticalList extends Layout {
             
             //Sum of heights of absolute-height tiles.
             int solidHeights = getChildren().stream()
-                .filter(t -> t.getVFill() != Fill.FILL_PARENT)
+                .filter(t -> !t.getFill().V_FILL_PARENT)
                 .mapToInt(Tile::getHeight)
                 .sum();
             
             //Sum of weights of relative-height tiles.
             int totalWeight = getChildren().stream()
-                .filter(t -> t.getVFill() == Fill.FILL_PARENT)
+                .filter(t -> t.getFill().V_FILL_PARENT)
                 .mapToInt(Tile::getVWeight)
                 .sum();
             
@@ -83,7 +89,7 @@ public class VerticalList extends Layout {
             
             //Divide excess space among relative-height tiles.
             getChildren().stream()
-                .filter(t -> t.getVFill() == Fill.FILL_PARENT)
+                .filter(t -> t.getFill().V_FILL_PARENT)
                 .forEach(t -> t.setHeight(
                     stretchyHeights * t.getVWeight() / totalWeight));
         }
@@ -95,7 +101,7 @@ public class VerticalList extends Layout {
     private void updateWidth() {
         
         //If set to match size of contents vertically.
-        if(getHFill() == Fill.WRAP_CONTENT) {
+        if(getFill().H_WRAP_CONTENT) {
             
             //Update children to obtains their widths.
             getChildren().forEach(Tile::update);
@@ -110,7 +116,7 @@ public class VerticalList extends Layout {
             
             //Set relative-width tiles to match width of list.
             getChildren().stream()
-                .filter(t -> t.getHFill() == Fill.FILL_PARENT)
+                .filter(t -> t.getFill().H_FILL_PARENT)
                 .forEach(t -> t.setWidth(getWidth() - 2*getPadding()));
         }
     }
@@ -125,7 +131,7 @@ public class VerticalList extends Layout {
         
         //Sum of heights of absolute-height tiles.
         int solidHeight = getChildren().stream()
-            .filter(t -> t.getVFill() != Fill.FILL_PARENT)
+            .filter(t -> !t.getFill().V_FILL_PARENT)
             .mapToInt(Tile::getHeight)
             .sum();
         
@@ -134,7 +140,7 @@ public class VerticalList extends Layout {
         
         //If there are no relative-width tiles.
         if(getChildren().stream().noneMatch(
-                t -> t.getVFill() == Fill.FILL_PARENT)) {
+                t -> t.getFill().V_FILL_PARENT)) {
             
             //Total amount of horizontal padding and spacing.
             int vPadding = (getChildren().size()-1)*getSpacing()

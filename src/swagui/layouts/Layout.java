@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import swagui.tiles.Scene2D;
 import swagui.tiles.Tile;
 
 /**
@@ -13,6 +12,74 @@ import swagui.tiles.Tile;
  * @author Alec Dorrington
  */
 public class Layout extends Tile {
+    
+    /**
+     * Method for determining tile position.
+     */
+    public enum Align {
+        
+        //Relative location of the tile.
+        TOP_LEFT(0.0F, 1.0F),
+        TOP(0.5F, 1.0F),
+        TOP_RIGHT(1.0F, 1.0F),
+        LEFT(0.0F, 0.5F),
+        CENTER(0.5F, 0.5F),
+        RIGHT(1.0F, 0.5F),
+        BOTTOM_LEFT(0.0F, 0.0F),
+        BOTTOM(0.5F, 0.0F),
+        BOTTOM_RIGHT(1.0F, 0.0F);
+        
+        /** Horizontal/vertical alignment mode, 0.0-1.0. */
+        public final float H_ALIGNMENT, V_ALIGNMENT;
+        
+        private Align(float h, float v) {
+            H_ALIGNMENT = h; V_ALIGNMENT = v;
+        }
+    }
+    
+    /**
+     * Method for determining tile size.
+     */
+    public enum Fill {
+        
+        /** Tile size is specified in pixels. */
+        ABSOLUTE(true, true, false, false, false, false, false),
+        /** Tile size is specified relative to parent. */
+        FILL_PARENT(false, false, true, true, false, false, false),
+        /** Tile size is automatically determined by it's contents. */
+        WRAP_CONTENT(false, false, false, false, true, true, false),
+        
+        /** Tile size is determined by its parent and aspect ratio. */
+        FILL_PARENT_ASPECT(false, false, true, true, false, false, true),
+        /** Tile size is determined by its contents and aspect ratio. */
+        WRAP_CONTENT_ASPECT(false, false, false, false, true, true, true),
+        
+        //Mixed fill modes.
+        H_ABSOLUTE_V_FILL_PARENT(true, false, false, true, false, false, false),
+        H_ABSOLUTE_V_WRAP_CONTENT(true, false, false, false, false, true, false),
+        H_FILL_PARENT_V_ABSOLUTE(false, true, true, false, false, false, false),
+        H_FILL_PARENT_V_WRAP_CONTENT(false, false, true, false, false, true, false),
+        H_WRAP_CONTENT_V_ABSOLUTE(false, true, false, false, true, false, false),
+        H_WRAP_CONTENT_V_FILL_PARENT(false, false, false, true, true, false, false);
+        
+        /** Whether this fill mode uses absolute sizing. */
+        public final boolean H_ABSOLUTE, V_ABSOLUTE;
+        /** Whether this fill mode uses fill sizing. */
+        public final boolean H_FILL_PARENT, V_FILL_PARENT;
+        /** Whether this fill mode uses wrap sizing. */
+        public final boolean H_WRAP_CONTENT, V_WRAP_CONTENT;
+        /** Whether this fill mode uses an aspect ratio. */
+        public final boolean ASPECT_RATIO;
+        
+        private Fill(boolean hAbs, boolean vAbs, boolean hFill, boolean vFill,
+                boolean hWrap, boolean vWrap, boolean aspect) {
+            
+            H_ABSOLUTE = hAbs; V_ABSOLUTE = vAbs;
+            H_FILL_PARENT = hFill; V_FILL_PARENT = vFill;
+            H_WRAP_CONTENT = hWrap; V_WRAP_CONTENT = vWrap;
+            ASPECT_RATIO = aspect;
+        }
+    }
     
     /** Contents of this layout. */
     private List<Tile> children = new LinkedList<>();
@@ -28,7 +95,7 @@ public class Layout extends Tile {
     public Layout(Tile... children) {
         super();
         for(Tile tile : children) addTile(tile);
-        setFill(Fill.FILL_PARENT, Fill.FILL_PARENT);
+        setFill(Fill.FILL_PARENT);
         setVisible(false);
         setDepth(1);
     }
@@ -40,8 +107,6 @@ public class Layout extends Tile {
      */
     public Layout addTile(Tile tile) {
         children.add(tile);
-        tile.setScene(getScene());
-        if(getScene() != null) getScene().update();
         return this;
     }
     
@@ -53,8 +118,6 @@ public class Layout extends Tile {
      */
     public Layout addTile(Tile tile, int index) {
         children.add(index, tile);
-        tile.setScene(getScene());
-        if(getScene() != null) getScene().update();
         return this;
     }
     
@@ -65,7 +128,6 @@ public class Layout extends Tile {
      */
     public Layout removeTile(Tile tile) {
         children.remove(tile);
-        if(getScene() != null) getScene().update();
         return this;
     }
     
@@ -104,15 +166,6 @@ public class Layout extends Tile {
      */
     public Layout setPadding(int padding) {
         this.padding = padding;
-        if(getScene() != null) getScene().update();
-        return this;
-    }
-    
-    @Override
-    public Layout setScene(Scene2D scene) {
-        super.setScene(scene);
-        children.forEach(t -> t.setScene(scene));
-        if(getScene() != null) getScene().update();
         return this;
     }
     
@@ -130,23 +183,11 @@ public class Layout extends Tile {
      */
     protected void alignTileHorz(Tile tile, int minX, int maxX) {
         
-        switch(tile.getAlignment()) {
-        
-        //Tile aligns with left edge of list.
-        case BOTTOM_LEFT: case LEFT: case TOP_LEFT:
-            tile.setX(minX + tile.getWidth()/2);
-            break;
-        
-        //Tile aligns with center of list.
-        case BOTTOM: case CENTER: case TOP:
-            tile.setX((minX + maxX)/2);
-            break;
-        
-        //Tile aligns with right edge of list.
-        case BOTTOM_RIGHT: case RIGHT: case TOP_RIGHT:
-            tile.setX(maxX - tile.getWidth()/2);
-            break;
-        }
+        //Get min/max bounds for center of tile.
+        int min = minX + tile.getWidth()/2;
+        int max = maxX - tile.getWidth()/2;
+        //Interpolate between bounds using horizontal tile alignment.
+        tile.setX(min + (int)((max-min)*tile.getAlignment().H_ALIGNMENT));
     }
     
     /**
@@ -158,22 +199,35 @@ public class Layout extends Tile {
      */
     protected void alignTileVert(Tile tile, int minY, int maxY) {
         
-        switch(tile.getAlignment()) {
+        //Get min/max bounds for center of tile.
+        int min = minY + tile.getHeight()/2;
+        int max = maxY - tile.getHeight()/2;
+        //Interpolate between bounds using vertical tile alignment.
+        tile.setX(min + (int)((max-min)*tile.getAlignment().V_ALIGNMENT));
+    }
+    
+    /**
+     * Update aspect ratio of this frame and its children.
+     */
+    protected void updateAspectRatio() {
         
-        //Tile aligns with bottom edge of list.
-        case BOTTOM_LEFT: case BOTTOM: case BOTTOM_RIGHT:
-            tile.setY(minY + tile.getHeight()/2);
-            break;
-        
-        //Tile aligns with center of list.
-        case LEFT: case CENTER: case RIGHT:
-            tile.setY((minY + maxY)/2);
-            break;
-        
-        //Tile aligns with top edge of list.
-        case TOP_LEFT: case TOP: case TOP_RIGHT:
-            tile.setY(maxY - tile.getHeight()/2);
-            break;
+        //Update aspect ratio for this frame if its set to wrap content.
+        if(getFill() == Fill.WRAP_CONTENT_ASPECT) {
+            //Use maximum width and height to ensure complete wrap.
+            setWidth(Math.max(getWidth(), (int) (getHeight() * getAspectRatio())));
+            setHeight(Math.max(getHeight(), (int) (getWidth() / getAspectRatio())));
         }
+        
+        //Update aspect ratio for each child set to fill parent.
+        getChildren().stream()
+            .filter(t -> t.getFill() == Fill.FILL_PARENT_ASPECT)
+            
+            //Use minimum width to prevent overhang.
+            .peek(t -> t.setWidth(Math.min(
+                t.getWidth(), (int) (t.getHeight() * t.getAspectRatio()))))
+            
+            //Use minimum height to prevent overhang.
+            .forEach(t -> t.setHeight(Math.min(
+                t.getHeight(), (int) (t.getWidth() / t.getAspectRatio()))));
     }
 }

@@ -3,6 +3,8 @@ package swagui.window;
 import static org.lwjgl.opengl.GL.*;
 import static org.lwjgl.opengl.GL11.*;
 
+import swagui.graphics.Colour;
+
 import static org.lwjgl.glfw.GLFW.*;
 
 import static org.lwjgl.glfw.GLFWErrorCallback.*;
@@ -60,12 +62,6 @@ public class Window {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
-        //Continue rendering while window is being resized.
-        glfwSetFramebufferSizeCallback(windowId, (window, w, h) -> {
-            glViewport(0, 0, w, h);
-            render(windowId, scene);
-        });
-        
         //Initialize shader.
         handler.init(windowId);
         scene.init(width, height, handler);
@@ -79,6 +75,12 @@ public class Window {
      * @param handler for use in handling input events.
      */
     private void run(long windowId, Scene scene, Handler handler) {
+        
+        //Continue rendering while window is being resized.
+        glfwSetFramebufferSizeCallback(windowId, (window, w, h) -> {
+            glViewport(0, 0, w, h);
+            render(windowId, scene);
+        });
         
         //Update window and event handler until window is closed.
         while(!glfwWindowShouldClose(windowId)) {
@@ -95,9 +97,10 @@ public class Window {
      */
     private void render(long windowId, Scene scene) {
         
-        //Clear buffers.
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); 
-        glClearColor(1.0F, 1.0F, 1.0F, 1.0F);
+        //Clear colour/depth buffers.
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        Colour colour = scene.getColour();
+        glClearColor(colour.R/255.0F, colour.G/255.0F, colour.B/255.0F, 1.0F);
         
         //Get window size.
         int[] width = new int[1], height = new int[1];
@@ -139,6 +142,11 @@ public class Window {
          * @param height of the window (pixels).
          */
         public void render(int width, int height);
+        
+        /**
+         * @return the background colour of this scene.
+         */
+        public Colour getColour();
         
         /**
          * Perform cleanup upon window close.
