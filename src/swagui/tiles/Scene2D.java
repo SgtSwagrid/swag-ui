@@ -30,7 +30,7 @@ public class Scene2D implements Scene {
     private Frame background = (Frame) new Frame()
             .setDepth(0)
             .setVisible(true)
-            .setColour(Colour.ELECTROMAGNETIC);
+            .setColour(Colour.PICO_VOID);
     
     /** Root layout of scene. */
     private Layout root = new Layout(background);

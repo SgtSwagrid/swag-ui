@@ -27,7 +27,7 @@ public abstract class Shader {
     /**
      * The source files of the shaders.
      */
-    private String vertexShaderFile, fragmentShaderFile;
+    private String vertexShaderSrc, fragmentShaderSrc;
     
     /** Table of uniform variable locations. */
     private Map<String, Integer> uniforms = new HashMap<>();
@@ -37,9 +37,9 @@ public abstract class Shader {
      * @param vertexShaderFile the source file for the vertex shader.
      * @param fragmentShaderFile the source file for the fragment shader.
      */
-    protected Shader(String vertexShaderFile, String fragmentShaderFile) {
-        this.vertexShaderFile = vertexShaderFile;
-        this.fragmentShaderFile = fragmentShaderFile;
+    protected Shader(String vertexShaderSrc, String fragmentShaderSrc) {
+        this.vertexShaderSrc = vertexShaderSrc;
+        this.fragmentShaderSrc = fragmentShaderSrc;
     }
     
     /**
@@ -48,8 +48,8 @@ public abstract class Shader {
     public void init() {
         
         //Compile shader source.
-        vertexShaderId = compile(vertexShaderFile, GL_VERTEX_SHADER);
-        fragmentShaderId = compile(fragmentShaderFile, GL_FRAGMENT_SHADER);
+        vertexShaderId = compile(vertexShaderSrc, GL_VERTEX_SHADER);
+        fragmentShaderId = compile(fragmentShaderSrc, GL_FRAGMENT_SHADER);
         
         //Create shader program and attach shaders.
         shaderProgramId = glCreateProgram();
@@ -149,10 +149,10 @@ public abstract class Shader {
      * @param shaderType the type of shader (vertex/fragment).
      * @return the ID of the compiled shader.
      */
-    private int compile(String shaderFile, int shaderType) {
+    private int compile(String shaderSrc, int shaderType) {
         
         //Read source file.
-        String src = readFile(shaderFile);
+        String src = loadResource(shaderSrc);
         
         //Compile shader source.
         int shaderId = glCreateShader(shaderType);
@@ -168,13 +168,13 @@ public abstract class Shader {
     }
     
     /**
-     * Read entire contents of file to string.
+     * Read entire contents of file/resource to string.
      * @param path the relative path of the file.
      * @return the contents of the file.
      */
-    private String readFile(String path) {
+    private String loadResource(String name) {
         
-        InputStream in = getClass().getResourceAsStream(path);
+        InputStream in = getClass().getResourceAsStream(name);
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         return reader.lines().reduce("", (l1, l2) -> l1 + "\n" + l2);
     }
