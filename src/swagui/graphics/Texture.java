@@ -4,7 +4,6 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.*;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
@@ -39,7 +38,7 @@ public class Texture {
      * @return ID of this texture.
      */
     public int getTextureId() {
-        if(textureId == -1) textureId = loadTexture(fileName);
+        if(textureId == -1) textureId = loadPng(fileName);
         return textureId;
     }
     
@@ -49,16 +48,16 @@ public class Texture {
     public boolean isOpaque() { return opaque; }
     
     /**
-     * Load a texture into OpenGL from file.
+     * Load a texture from PNG file into byte buffer then OpenGL.
      * @param fileName the image file to load.
      * @return the ID of the texture.
      */
-    private int loadTexture(String fileName) {
+    private int loadPng(String fileName) {
         
         //Load image from file.
         BufferedImage image = null;
         try {
-            image = ImageIO.read(new File(fileName));
+            image = ImageIO.read(getClass().getResourceAsStream(fileName));
         } catch(IOException e) {
             e.printStackTrace();
         }
@@ -83,6 +82,16 @@ public class Texture {
         }
         
         buffer.flip();
+        return loadTexture(image, buffer);
+    }
+    
+    /**
+     * Load a texture from byte buffer into OpenGL.
+     * @param image which was loaded.
+     * @param buffer of pixels values in image.
+     * @return the ID of the texture.
+     */
+    private int loadTexture(BufferedImage image, ByteBuffer buffer) {
         
         //Create new texture.
         int textureId = glGenTextures();

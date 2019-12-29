@@ -25,8 +25,7 @@ public class TileShader extends Shader {
      * Create tile shader program from GLSL source.
      */
     public TileShader() {
-        super("src/swagui/shaders/vertex.glsl",
-              "src/swagui/shaders/fragment.glsl");
+        super("vertex.glsl", "fragment.glsl");
     }
 
     @Override
@@ -37,9 +36,9 @@ public class TileShader extends Shader {
     
     /**
      * Render the given set of tiles.
-     * @param tiles
-     * @param width
-     * @param height
+     * @param tiles to render.
+     * @param width of the window (pixels).
+     * @param height of the window (pixels).
      */
     public void render(Set<Tile> tiles, int width, int height) {
         

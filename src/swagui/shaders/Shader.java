@@ -3,9 +3,9 @@ package swagui.shaders;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -152,18 +152,14 @@ public abstract class Shader {
     
     /**
      * Read entire contents of file to string.
-     * @param path the name of the file.
+     * @param path the relative path of the file.
      * @return the contents of the file.
      */
     private String readFile(String path) {
         
-        String content = "";
-        try {
-            content = new String(Files.readAllBytes(Paths.get(path)));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return content;
+        InputStream in = getClass().getResourceAsStream(path);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        return reader.lines().reduce("", (l1, l2) -> l1 + "\n" + l2);
     }
     
     /**
