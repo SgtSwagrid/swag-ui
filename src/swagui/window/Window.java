@@ -15,6 +15,24 @@ import static org.lwjgl.glfw.GLFWErrorCallback.*;
  */
 public class Window {
     
+    /** The ID of the window. */
+    private long windowId;
+    
+    /** The size of the window (pixels). */
+    private int width, height;
+    
+    /** The title of the window. */
+    private String title;
+    
+    /** The scene shown in the window. */
+    private Scene scene;
+    
+    /** The input handler to detect events in the window. */
+    private Handler handler;
+    
+    /** Whether the window is currently open. */
+    private boolean open = true;
+    
     /**
      * Create and run a new window, blocking until exit.
      * @param width of window (pixels).
@@ -25,22 +43,82 @@ public class Window {
      */
     public Window(int width, int height, String title,
             Scene scene, Handler handler) {
-        long windowId = init(width, height, title, scene, handler);
-        run(windowId, scene, handler);
-        close(windowId, scene, handler);
+        this.width = width;
+        this.height = height;
+        this.title = title;
+        this.scene = scene;
+        this.handler = handler;
+    }
+    
+    /** @return the ID of the window/ */
+    public long getWindowId() { return windowId; }
+    
+    /** @return the width of the window (pixels). */
+    public int getWidth() { return width; }
+    
+    /** @return the height of the window (pixels). */
+    public int getHeight() { return height; }
+    
+    /** @return the title of the window. */
+    public String getTitle() { return title; }
+    
+    /**
+     * Set a new title for this window.
+     * @param title of this window.
+     * @return this window.
+     */
+    public Window setTitle(String title) {
+        this.title = title;
+        return this;
+    }
+    
+    /** @return the scene shown in the window. */
+    public Scene getScene() { return scene; }
+    
+    /** @return the handler to detect events in the window. */
+    public Handler getHandler() { return handler; }
+    
+    /**
+     * Open the window. Blocks execution until window closes.
+     */
+    public void open() {
+        
+        init();
+        
+        //Continue rendering while window is being resized.
+        glfwSetFramebufferSizeCallback(windowId, (window, width, height) -> {
+            this.width = width;
+            this.height = height;
+            glViewport(0, 0, width, height);
+            render();
+        });
+        
+        //Update window and event handler until window is closed.
+        while(open) {
+            render();
+            glfwPollEvents();
+            glfwSetWindowTitle(windowId, title);
+            open &= !glfwWindowShouldClose(windowId);
+        }
+        destroy();
+    }
+    
+    /** @return whether the window is currently open. */
+    public boolean isOpen() { return open; }
+    
+    /**
+     * Close the window.
+     * @return this window.
+     */
+    public Window close() {
+        open = false;
+        return this;
     }
     
     /**
      * Initialize and create a new window.
-     * @param width of window (pixels).
-     * @param height of window (pixels).
-     * @param title of window.
-     * @param scene to display.
-     * @param handler for use in handling input events.
-     * @return the window ID.
      */
-    private long init(int width, int height, String title,
-            Scene scene, Handler handler) {
+    private void init() {
         
         //Initialize GLFW.
         glfwInit();
@@ -52,9 +130,10 @@ public class Window {
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         
         //Create and show window.
-        long windowId = glfwCreateWindow(width, height, title, 0, 0);
+        windowId = glfwCreateWindow(width, height, title, 0, 0);
         glfwMakeContextCurrent(windowId);
         createCapabilities();
+        //glfwSetWindowIcon(windowId, null);
         glfwShowWindow(windowId);
         
         //Initialize OpenGL settings.
@@ -65,59 +144,27 @@ public class Window {
         //Initialize shader.
         handler.init(windowId);
         scene.init(width, height, handler);
-        return windowId;
-    }
-    
-    /**
-     * Continually update window until close.
-     * @param windowId of GLFW window.
-     * @param scene to display.
-     * @param handler for use in handling input events.
-     */
-    private void run(long windowId, Scene scene, Handler handler) {
-        
-        //Continue rendering while window is being resized.
-        glfwSetFramebufferSizeCallback(windowId, (window, w, h) -> {
-            glViewport(0, 0, w, h);
-            render(windowId, scene);
-        });
-        
-        //Update window and event handler until window is closed.
-        while(!glfwWindowShouldClose(windowId)) {
-            
-            render(windowId, scene);
-            glfwPollEvents();
-        }
     }
     
     /**
      * Render a frame to screen.
-     * @param windowId ID of window.
-     * @param scene to display.
      */
-    private void render(long windowId, Scene scene) {
+    private void render() {
         
         //Clear colour/depth buffers.
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         Colour colour = scene.getColour();
         glClearColor(colour.R/255.0F, colour.G/255.0F, colour.B/255.0F, 1.0F);
         
-        //Get window size.
-        int[] width = new int[1], height = new int[1];
-        glfwGetWindowSize(windowId, width, height);
-        
         //Perform render.
-        scene.render(width[0], height[0]);
+        scene.render(width, height);
         glfwSwapBuffers(windowId);
     }
     
     /**
-     * Close the window.
-     * @param windowId of GLFW window.
-     * @param scene to display.
-     * @param handler for use in handling input events.
+     * Destroy the window.
      */
-    private void close(long windowId, Scene scene, Handler handler) {
+    private void destroy() {
         //Destroy shader and window.
         scene.destroy();
         glfwDestroyWindow(windowId);
