@@ -36,13 +36,13 @@ new Window(1280, 960, "Example 2", scene, input);
 scene.getBackground().addTile(new HorizontalList(
     new Tile()
         .setColour(Colour.LYNX_WHITE)
-        .setFill(Fill.FILL_PARENT, Fill.FILL_PARENT),
+        .setFill(Fill.FILL_PARENT),
     new Tile()
         .setColour(Colour.NAVAL)
-        .setFill(Fill.FILL_PARENT, Fill.FILL_PARENT),
+        .setFill(Fill.FILL_PARENT),
     new Tile()
         .setColour(Colour.ELECTROMAGNETIC)
-        .setFill(Fill.FILL_PARENT, Fill.FILL_PARENT)));
+        .setFill(Fill.FILL_PARENT)));
 
 window.open();
 ```
