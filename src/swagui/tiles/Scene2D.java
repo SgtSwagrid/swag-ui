@@ -4,6 +4,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import swagui.graphics.Colour;
+import swagui.graphics.Gradient;
 import swagui.input.InputHandler;
 import swagui.input.InputHandler.WindowResizeEvent;
 import swagui.layouts.Frame;
@@ -62,7 +63,7 @@ public class Scene2D implements Scene {
     }
     
     @Override
-    public Colour getColour() {
+    public Gradient getColour() {
         return background.getColour();
     }
 

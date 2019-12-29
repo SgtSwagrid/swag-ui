@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import swagui.graphics.Colour;
@@ -107,8 +108,24 @@ public abstract class Shader {
         glUniform1f(locationOf(name), value ? 1 : 0);
     }
     
+    /**
+     * Load uniform to GPU.
+     * @param name of uniform variable.
+     * @param colour to be loaded.
+     */
     protected void setUniform(String name, Colour colour) {
         glUniform4f(locationOf(name), colour.R, colour.G, colour.B, colour.A);
+    }
+    
+    /**
+     * Load uniform to GPU.
+     * @param name of uniform variable.
+     * @param colours to be loaded.
+     */
+    protected void setUniform(String name, List<Colour> colours) {
+        for(int i = 0; i < colours.size(); i++) {
+            setUniform(name+"["+i+"]", colours.get(i));
+        }
     }
     
     /**

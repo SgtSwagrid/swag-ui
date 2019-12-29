@@ -3,6 +3,7 @@ package swagui.tiles;
 import java.util.Optional;
 
 import swagui.graphics.Colour;
+import swagui.graphics.Gradient;
 import swagui.graphics.Texture;
 import swagui.layouts.Layout.Align;
 import swagui.layouts.Layout.Fill;
@@ -39,7 +40,7 @@ public class Tile {
     private int depth = 50;
     
     /** The colour of the tile */
-    private Colour colour = Colour.SEARBROOK;
+    private Gradient colour = Colour.SEARBROOK;
     
     /** The texture of the tile. */
     private Texture texture;
@@ -256,14 +257,14 @@ public class Tile {
     }
     
     /** @return colour of the tile. */
-    public Colour getColour() { return colour; }
+    public Gradient getColour() { return colour; }
     
     /**
      * Set the colour of the tile.
      * @param colour of the tile.
      * @return this tile.
      */
-    public Tile setColour(Colour colour) {
+    public Tile setColour(Gradient colour) {
         this.colour = colour;
         return this;
     }

@@ -4,6 +4,7 @@ import static org.lwjgl.opengl.GL.*;
 import static org.lwjgl.opengl.GL11.*;
 
 import swagui.graphics.Colour;
+import swagui.graphics.Gradient;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -31,10 +32,10 @@ public class Window {
     private Handler handler;
     
     /** Whether the window is currently open. */
-    private boolean open = true;
+    private boolean open = false;
     
     /**
-     * Create and run a new window, blocking until exit.
+     * Create a new window. Use window.open() to open it.
      * @param width of window (pixels).
      * @param height of window (pixels).
      * @param title of window.
@@ -92,6 +93,8 @@ public class Window {
             glViewport(0, 0, width, height);
             render();
         });
+        
+        open = true;
         
         //Update window and event handler until window is closed.
         while(open) {
@@ -153,7 +156,7 @@ public class Window {
         
         //Clear colour/depth buffers.
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        Colour colour = scene.getColour();
+        Colour colour = scene.getColour().getCorners().get(0);
         glClearColor(colour.R/255.0F, colour.G/255.0F, colour.B/255.0F, 1.0F);
         
         //Perform render.
@@ -193,7 +196,7 @@ public class Window {
         /**
          * @return the background colour of this scene.
          */
-        public Colour getColour();
+        public Gradient getColour();
         
         /**
          * Perform cleanup upon window close.

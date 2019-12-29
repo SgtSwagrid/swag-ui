@@ -4,11 +4,9 @@ package swagui.graphics;
  * RGBA colour.
  * @author Alec Dorrington
  */
-public class Colour {
+public class Colour extends Gradient {
     
-    /**
-     * WHITE
-     */
+    // WHITE
     
     /** White: 0xFFFFFF. */
     public static final Colour WHITE = hex(0xFFFFFF);
@@ -19,9 +17,7 @@ public class Colour {
     /** Hint of Pensive: 0xDCDDE1. */
     public static final Colour HINT_OF_PENSIVE = hex(0xDCDDE1);
     
-    /**
-     * GRAY
-     */
+    // GRAY
     
     /** Blueberry Soda: 0x7F8FA6. */
     public static final Colour BLUEBERRY_SODA = hex(0x7F8FA6);
@@ -29,12 +25,7 @@ public class Colour {
     /** Chain Gang Grey: 0x718093. */
     public static final Colour CHAIN_GANG_GREY = hex(0x718093);
     
-    /** Colour channel values (0-255). */
-    public final int R, G, B, A;
-    
-    /**
-     * BLACK
-     */
+    // BLACK
     
     /** Black: 0x000000. */
     public static final Colour BLACK = hex(0x000000);
@@ -45,9 +36,7 @@ public class Colour {
     /** Electromagnetic: 0x2F3640. */
     public static final Colour ELECTROMAGNETIC = hex(0x2F3640);
     
-    /**
-     * BLUE
-     */
+    // BLUE
     
     /** Searbrook: 0x487EB0. */
     public static final Colour SEARBROOK = hex(0x487EB0);
@@ -61,6 +50,9 @@ public class Colour {
     /** Pico Void: 0x192A56. */
     public static final Colour PICO_VOID = hex(0x192A56);
     
+    /** Colour channel values (0-255). */
+    public final int R, G, B, A;
+    
     /**
      * Create a new colour using RGBA (0-255).
      * @param r red channel value (0-255).
@@ -73,6 +65,7 @@ public class Colour {
         G = g<0 ? g : g>255 ? 255 : g;
         B = b<0 ? b : b>255 ? 255 : b;
         A = a<0 ? a : a>255 ? 255 : a;
+        setCorners(this, this, this, this);
     }
     
     /**

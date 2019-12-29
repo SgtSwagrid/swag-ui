@@ -72,7 +72,7 @@ public class TileShader extends Shader {
         }
         
         setUniform("transform", tile.getTransform());
-        setUniform("colour", tile.getColour());
+        setUniform("colours", tile.getColour().getCorners());
         setUniform("textured", tile.getTexture().isPresent());
         
         //Render tile.
