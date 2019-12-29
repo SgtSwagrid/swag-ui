@@ -31,7 +31,7 @@ Example 2
 ```java
 Scene2D scene = new Scene2D();
 InputHandler input = new InputHandler();
-new Window(1280, 960, "Example 2", scene, input);
+Window window = new Window(1280, 960, "Example 2", scene, input);
 
 scene.getBackground().addTile(new HorizontalList(
     new Tile()
