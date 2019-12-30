@@ -1,6 +1,12 @@
 package swagui.input;
 
-import swagui.input.InputHandler.MouseLeftClickEvent;
+import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
+import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
+
+import java.util.function.BiConsumer;
+
+import swagui.graphics.Gradient;
+import swagui.input.InputHandler.MouseButtonEvent;
 import swagui.input.InputHandler.MouseMoveEvent;
 import swagui.layouts.Frame;
 
@@ -10,8 +16,11 @@ import swagui.layouts.Frame;
  */
 public class Button extends Frame {
     
-    /** Input event handler. */
+    /** Input event handler from window. */
     private InputHandler input;
+    
+    /** Button event handler. */
+    EventHandler handler = new EventHandler();
     
     /** Whether the cursor is currently over this button. */
     private boolean mouseOver = false;
@@ -42,8 +51,20 @@ public class Button extends Frame {
         init();
     }
     
-    /** @return input event handler. */
-    public InputHandler getInputHandler() { return input; }
+    /**
+     * Perform an action whenever the button is left-clicked.
+     * Accepts the coordinates of the cursor (pixels, relative to button center).
+     * @param action to be performed upon button left-click.
+     * @return this button.
+     */
+    public Button onClick(BiConsumer<Integer, Integer> action) {
+        getHandler().register(ButtonLeftClickEvent.class,
+            e -> action.accept(e.BX, e.BY));
+        return this;
+    }
+    
+    /** @return button event handler. */
+    public EventHandler getHandler() { return handler; }
     
     /**  @return whether the cursor is currently over this button. */
     public boolean isMouseOver() { return mouseOver; }
@@ -51,6 +72,13 @@ public class Button extends Frame {
     @Override
     public void update() {
         updateCursor(input.getMouseX(), input.getMouseY());
+        super.update();
+    }
+    
+    @Override
+    public Gradient getColour() {
+        //Darken button when cursor is over.
+        return super.getColour().darken(isMouseOver() ? 15 : 0);
     }
     
     /**
@@ -58,9 +86,20 @@ public class Button extends Frame {
      */
     private void init() {
         
-        //Left-click event handler.
-        input.getHandler().register(MouseLeftClickEvent.class, this,
-            e -> { if(mouseOver) onLeftClick(); });
+        //Button click event handler.
+        input.getHandler().register(MouseButtonEvent.class, this, e -> {
+            
+            if(mouseOver) {
+                //Trigger mouse click event.
+                if(e.BUTTON == GLFW_MOUSE_BUTTON_LEFT && e.ACTION == GLFW_PRESS) {
+                    handler.trigger(new ButtonLeftClickEvent(
+                        e.MX-getX(), e.MY-getY()));
+                } else {
+                    handler.trigger(new ButtonClickEvent(
+                        e.MX-getX(), e.MY-getY(), e.BUTTON, e.ACTION));
+                }
+            }
+        });
         
         //Mouse movement event handler.
         input.getHandler().register(MouseMoveEvent.class, this,
@@ -78,24 +117,74 @@ public class Button extends Frame {
         boolean mouseStillOver = mx >= getMinX() && mx <= getMaxX() &&
                                  my >= getMinY() && my <= getMaxY();
          
-        //Call mouse enter/leave as appropriate.
-        if(!mouseOver && mouseStillOver) onMouseEnter();
-        else if(mouseOver && !mouseStillOver) onMouseLeave();
+        //Trigger mouse enter/leave events as appropriate.
+        if(!mouseOver && mouseStillOver) {
+            handler.trigger(new ButtonMouseEnterEvent(mx-getX(), my-getY()));
+        } else if(mouseOver && !mouseStillOver) {
+            handler.trigger(new ButtonMouseLeaveEvent(mx-getX(), my-getY()));
+        }
         mouseOver = mouseStillOver;
     }
     
     /**
-     * Called when the button is left-clicked.
+     * Event for button interaction.
      */
-    protected void onLeftClick() {}
+    public abstract class ButtonEvent {
+        
+        /** Cursor position (pixels, relative to button center). */
+        public final int BX, BY;
+        
+        private ButtonEvent(int bx, int by) {
+            BX = bx;
+            BY = by;
+        }
+    }
     
     /**
-     * Called when the cursor enters the button.
+     * Event for button click.
      */
-    protected void onMouseEnter() {}
+    public class ButtonClickEvent extends ButtonEvent {
+        
+        /** The ID of the button which was clicked. */
+        public final int BUTTON;
+        
+        /** Click/release. */
+        public final int ACTION;
+        
+        private ButtonClickEvent(int bx, int by, int button, int action) {
+            super(bx, by);
+            BUTTON = button;
+            ACTION = action;
+        }
+    }
     
     /**
-     * Called when the cursor leaves the button.
+     * Event for button left-click.
      */
-    protected void onMouseLeave() {}
+    public class ButtonLeftClickEvent extends ButtonClickEvent {
+        
+        private ButtonLeftClickEvent(int mx, int my) {
+            super(mx, my, GLFW_MOUSE_BUTTON_LEFT, GLFW_PRESS);
+        }
+    }
+    
+    /**
+     * Event for cursor entering button.
+     */
+    public class ButtonMouseEnterEvent extends ButtonEvent {
+        
+        private ButtonMouseEnterEvent(int mx, int my) {
+            super(mx, my);
+        }
+    }
+    
+    /**
+     * Event for cursor leaving button.
+     */
+    public class ButtonMouseLeaveEvent extends ButtonEvent {
+        
+        private ButtonMouseLeaveEvent(int mx, int my) {
+            super(mx, my);
+        }
+    }
 }
