@@ -18,12 +18,8 @@ scene.getRoot().addTile(new Tile(50, 50, 100, 100)
     .setColour(Colour.LYNX_WHITE)
     .setAngle(10));
 
-scene.getRoot().addTile(new Button(input, -250, 250, 200, 50) {
-    @Override
-    protected void onLeftClick() {
-        System.out.println("Hello, World!");
-    }
-});
+scene.getRoot().addTile(new Button(input, -250, 250, 200, 50)
+    .onClick((bx, by) -> System.out.println("Hello, World!"));
 
 window.open();
 ```
