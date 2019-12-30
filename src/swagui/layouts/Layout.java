@@ -132,6 +132,15 @@ public class Layout extends Tile {
     }
     
     /**
+     * Remove all tiles from the layout.
+     * @return this layout.
+     */
+    public Layout clearChildren() {
+        children.clear();
+        return this;
+    }
+    
+    /**
      * @return the contents of this layout.
      */
     public List<Tile> getChildren() {
