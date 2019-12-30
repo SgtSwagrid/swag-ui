@@ -105,6 +105,7 @@ public class Colour extends Gradient {
      * @param amount the amount to lighten the colour (0-255).
      * @return a lighter version of this colour.
      */
+    @Override
     public Colour lighten(int amount) {
         return new Colour(R+amount, G+amount, B+amount, A);
     }
@@ -114,17 +115,23 @@ public class Colour extends Gradient {
      * @param amount the amount to darken the colour (0-255).
      * @return a darker version of this colour.
      */
+    @Override
     public Colour darken(int amount) {
         return new Colour(R-amount, G-amount, B-amount, A);
     }
     
     /**
      * Mixes this colour with another.
-     * @param colour the colour to mix with.
+     * @param gradient the gradient to mix with.
      * @param amount how much of this colour to add (0-100%).
      * @return the new, mixed colour.
      */
-    public Colour mix(Colour colour, int amount) {
+    @Override
+    public Gradient mix(Gradient gradient, int amount) {
+        
+        if(!(gradient instanceof Colour)) return super.mix(gradient, amount);
+        Colour colour = (Colour) gradient;
+        
         return new Colour(
                 (100-amount)*R/100 + amount*colour.R/100,
                 (100-amount)*G/100 + amount*colour.G/100,

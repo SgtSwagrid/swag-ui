@@ -51,7 +51,7 @@ public class Gradient {
      * @return the colour gradient.
      */
     public static Gradient positiveDiagonal(Colour topRight, Colour bottomLeft) {
-        Colour mix = topRight.mix(bottomLeft, 50);
+        Colour mix = (Colour)topRight.mix(bottomLeft, 50);
         return new Gradient(mix, topRight, mix, bottomLeft);
     }
     
@@ -62,8 +62,51 @@ public class Gradient {
      * @return the colour gradient.
      */
     public static Gradient negativeDiagonal(Colour bottomRight, Colour topLeft) {
-        Colour mix = bottomRight.mix(topLeft, 50);
+        Colour mix = (Colour)bottomRight.mix(topLeft, 50);
         return new Gradient(bottomRight, mix, topLeft, mix);
+    }
+    
+    /**
+    * Creates a lighter version of a gradient.
+    * @param amount the amount to lighten the gradient (0-255).
+    * @return a lighter version of this gradient.
+    */
+   public Gradient lighten(int amount) {
+       
+       return new Gradient(
+               (Colour)getCorners().get(0).lighten(amount),
+               (Colour)getCorners().get(1).lighten(amount),
+               (Colour)getCorners().get(2).lighten(amount),
+               (Colour)getCorners().get(3).lighten(amount));
+   }
+   
+   /**
+    * Creates a darker version of a gradient.
+    * @param amount the amount to darken the gradient (0-255).
+    * @return a darker version of this gradient.
+    */
+   public Gradient darken(int amount) {
+       
+       return new Gradient(
+               (Colour)getCorners().get(0).darken(amount),
+               (Colour)getCorners().get(1).darken(amount),
+               (Colour)getCorners().get(2).darken(amount),
+               (Colour)getCorners().get(3).darken(amount));
+   }
+    
+    /**
+     * Mixes this gradient with another.
+     * @param gradient the gradient to mix with.
+     * @param amount how much of this gradient to add (0-100%).
+     * @return the new, mixed gradient.
+     */
+    public Gradient mix(Gradient gradient, int amount) {
+        
+        return new Gradient(
+               (Colour)getCorners().get(0).mix(gradient.getCorners().get(0), amount),
+               (Colour)getCorners().get(1).mix(gradient.getCorners().get(1), amount),
+               (Colour)getCorners().get(2).mix(gradient.getCorners().get(2), amount),
+               (Colour)getCorners().get(3).mix(gradient.getCorners().get(3), amount));
     }
     
     /**

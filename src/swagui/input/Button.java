@@ -2,13 +2,13 @@ package swagui.input;
 
 import swagui.input.InputHandler.MouseLeftClickEvent;
 import swagui.input.InputHandler.MouseMoveEvent;
-import swagui.tiles.Tile;
+import swagui.layouts.Frame;
 
 /**
  * A tile with click handling.
  * @author Alec Dorrington
  */
-public class Button extends Tile {
+public class Button extends Frame {
     
     /** Input event handler. */
     private InputHandler input;
@@ -35,8 +35,10 @@ public class Button extends Tile {
      * @param height of the button (pixels, bottom-to-top).
      */
     public Button(InputHandler input, int x, int y, int width, int height) {
-        super(x, y, width, height);
+        super();
         this.input = input;
+        setPosition(x, y);
+        setSize(width, height);
         init();
     }
     
