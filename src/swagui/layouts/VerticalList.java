@@ -38,12 +38,12 @@ public class VerticalList extends Layout {
     @Override
     public void update() {
         
-        //Update sizes of this frame and its children.
+        //Update sizes of this list and its children.
         updateWidth();
         updateHeight();
         updateAspectRatio();
         
-        //Update positions of this frame and its children.
+        //Update positions of this list and its children.
         updatePosition();
         
         getChildren().forEach(Tile::update);

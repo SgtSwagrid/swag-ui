@@ -203,7 +203,7 @@ public class Layout extends Tile {
         int min = minY + tile.getHeight()/2;
         int max = maxY - tile.getHeight()/2;
         //Interpolate between bounds using vertical tile alignment.
-        tile.setX(min + (int)((max-min)*tile.getAlignment().V_ALIGNMENT));
+        tile.setY(min + (int)((max-min)*tile.getAlignment().V_ALIGNMENT));
     }
     
     /**
