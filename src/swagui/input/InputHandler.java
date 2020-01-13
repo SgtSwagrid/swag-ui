@@ -2,6 +2,7 @@ package swagui.input;
 
 import static org.lwjgl.glfw.GLFW.*;
 
+import swagui.window.Window;
 import swagui.window.Window.Handler;
 
 /**
@@ -20,7 +21,9 @@ public class InputHandler implements Handler {
     public EventHandler getHandler() { return handler; }
 
     @Override
-    public void init(long windowId) {
+    public void init(Window window) {
+        
+        long windowId = window.getWindowId();
         
         //Mouse click listener.
         glfwSetMouseButtonCallback(windowId, this::onMouseButton);
@@ -33,6 +36,8 @@ public class InputHandler implements Handler {
         
         //Window resize listener.
         glfwSetWindowSizeCallback(windowId, this::onWindowSize);
+        
+        new WindowResizeEvent(window.getWidth(), window.getHeight());
     }
     
     /**

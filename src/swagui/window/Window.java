@@ -145,7 +145,7 @@ public class Window {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         
         //Initialize shader.
-        handler.init(windowId);
+        handler.init(this);
         scene.init(width, height, handler);
     }
     
@@ -211,8 +211,8 @@ public class Window {
         
         /**
          * Initialize input listeners.
-         * @param window window to listen to.
+         * @param window to listen to.
          */
-        public void init(long windowId);
+        public void init(Window window);
     }
 }

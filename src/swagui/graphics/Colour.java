@@ -8,47 +8,55 @@ public class Colour extends Gradient {
     
     // WHITE
     
-    /** White: 0xFFFFFF. */
+    /** White (White) 0xFFFFFF. */
     public static final Colour WHITE = hex(0xFFFFFF);
     
-    /** Lynx White: 0xF5F6FA. */
+    /** Lynx White (White) 0xF5F6FA. */
     public static final Colour LYNX_WHITE = hex(0xF5F6FA);
     
-    /** Hint of Pensive: 0xDCDDE1. */
+    /** Hint of Pensive (White) 0xDCDDE1. */
     public static final Colour HINT_OF_PENSIVE = hex(0xDCDDE1);
     
-    // GRAY
+    // GREY
     
-    /** Blueberry Soda: 0x7F8FA6. */
+    /** Blueberry Soda (Grey) 0x7F8FA6. */
     public static final Colour BLUEBERRY_SODA = hex(0x7F8FA6);
     
-    /** Chain Gang Grey: 0x718093. */
+    /** Chain Gang Grey (Grey) 0x718093. */
     public static final Colour CHAIN_GANG_GREY = hex(0x718093);
     
     // BLACK
     
-    /** Black: 0x000000. */
+    /** Black (Black) 0x000000. */
     public static final Colour BLACK = hex(0x000000);
     
-    /** Blue Nights: 0x353B48. */
+    /** Blue Nights (Black) 0x353B48. */
     public static final Colour BLUE_NIGHTS = hex(0x353B48);
     
-    /** Electromagnetic: 0x2F3640. */
+    /** Electromagnetic (Black) 0x2F3640. */
     public static final Colour ELECTROMAGNETIC = hex(0x2F3640);
     
     // BLUE
     
-    /** Searbrook: 0x487EB0. */
+    /** Searbrook (Blue) 0x487EB0. */
     public static final Colour SEARBROOK = hex(0x487EB0);
     
-    /** Naval: 0x40739E. */
+    /** Naval (Blue) 0x40739E. */
     public static final Colour NAVAL = hex(0x40739E);
     
-    /** Mazarine Blue: 0x273C75. */
+    /** Mazarine Blue (Blue) 0x273C75. */
     public static final Colour MAZARINE_BLUE = hex(0x273C75);
     
-    /** Pico Void: 0x192A56. */
+    /** Pico Void (Blue) 0x192A56. */
     public static final Colour PICO_VOID = hex(0x192A56);
+    
+    //ORANGE
+    
+    /** Spiced Butternut (Orange) 0xFFDA79. */
+    public static final Colour SPICED_BUTTERNUT = Colour.hex(0xFFDA79);
+    
+    /** Mandarin Sorbet (Orange) 0xFFB142. */
+    public static final Colour MANDARIN_SORBET = Colour.hex(0xFFB142);
     
     /** Colour channel values (0-255). */
     public final int R, G, B, A;
