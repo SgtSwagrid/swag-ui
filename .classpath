@@ -56,5 +56,5 @@
 	<classpathentry kind="lib" path="lib/lwjgl/lwjgl-sources.jar"/>
 	<classpathentry kind="lib" path="lib/lwjgl/lwjgl.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="output" path="bin1"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>
