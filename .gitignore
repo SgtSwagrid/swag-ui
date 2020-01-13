@@ -20,4 +20,8 @@ hs_err_pid*
 *.ctxt
 
 # J2ME Files
+<<<<<<< HEAD
 .mtj.tmp/
+=======
+.mtj.tmp/
+>>>>>>> branch 'develop' of https://github.com/SgtSwagrid/swag-ui
