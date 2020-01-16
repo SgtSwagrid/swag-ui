@@ -2,6 +2,7 @@ package swagui.tiles;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.concurrent.Semaphore;
 
 import swagui.graphics.Colour;
 import swagui.graphics.Gradient;
@@ -34,6 +35,9 @@ public class Scene2D implements Scene {
     
     /** Root layout of scene. */
     private Layout root = new Layout(background);
+    
+    /** Lock to prevent tile modification during render. */
+    private Semaphore lock = new Semaphore(1);
 
     @Override
     public void init(int width, int height, Handler handler) {
@@ -59,7 +63,16 @@ public class Scene2D implements Scene {
 
     @Override
     public void render(int width, int height) {
+        
+        //Acquire lock to prevent tile modification during render.
+        try {
+            lock.acquire();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        //Render tiles.
         shader.render(tiles, width, height);
+        lock.release();
     }
     
     @Override
@@ -90,10 +103,19 @@ public class Scene2D implements Scene {
      */
     public Scene2D update() {
         
+        //Acquire lock to prevent tile modification during render.
+        try {
+            lock.acquire();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
         //Update all tiles.
         tiles.clear();
         root.update();
         tiles.addAll(root.getAncestors());
+        
+        lock.release();
         return this;
     }
 }
